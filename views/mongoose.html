@@ -1,71 +1,197 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8">
+    <meta charset="utf-8" />
     <title>몽구스 서버</title>
     <style>
-      table { border: 1px solid black; border-collapse: collapse; }
-      table th, table td { border: 1px solid black; }
+      body {
+        font-family: "Nanum Myeongjo", serif;
+        background-color: #f9f3f3;
+        margin: 40px;
+      }
+
+      fieldset {
+        border: 2px solid #d4b5b5;
+        border-radius: 10px;
+        padding: 20px;
+        background-color: white;
+        margin-bottom: 30px;
+      }
+
+      legend {
+        color: #8b4513;
+        font-size: 1.2em;
+        padding: 0 10px;
+      }
+
+      input[type="text"],
+      input[type="number"] {
+        width: 200px;
+        padding: 8px;
+        margin: 5px 0;
+        border: 1px solid #d4b5b5;
+        border-radius: 4px;
+      }
+
+      button {
+        background-color: #8b4513;
+        color: white;
+        border: none;
+        padding: 8px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-top: 10px;
+      }
+
+      button:hover {
+        background-color: #6b3410;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: white;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+
+      table th {
+        background-color: #d4b5b5;
+        color: #4a2410;
+        padding: 12px;
+        text-align: center;
+      }
+
+      table td {
+        padding: 10px;
+        text-align: center;
+        border-bottom: 1px solid #eee;
+      }
+
+      tr:hover {
+        background-color: #fff5f5;
+      }
+
+      .checkbox-wrapper {
+        margin: 10px 0;
+      }
+
+      #married {
+        margin-right: 5px;
+      }
+
+      #comment-list {
+        margin-top: 20px;
+      }
     </style>
   </head>
   <body>
     <div>
       <form id="user-form">
         <fieldset>
-          <legend>사용자 등록</legend>
-          <div><input id="username" type="text" placeholder="이름"></div>
-          <div><input id="age" type="number" placeholder="나이"></div>
-          <div><input id="married" type="checkbox"><label for="married">결혼 여부</label></div>
+          <legend>💑 하객 등록</legend>
+          <div><input id="username" type="text" placeholder="이름" /></div>
+          <div><input id="age" type="number" placeholder="나이" /></div>
+          <div class="checkbox-wrapper">
+            <input id="married" type="checkbox" /><label for="married"
+              >결혼 여부</label
+            >
+          </div>
           <button type="submit">등록</button>
         </fieldset>
       </form>
     </div>
-    <br>
+    <br />
     <table id="user-list">
       <thead>
-      <tr>
-        <th>아이디</th>
-        <th>이름</th>
-        <th>나이</th>
-        <th>결혼여부</th>
-      </tr>
+        <tr>
+          <th>아이디</th>
+          <th>이름</th>
+          <th>나이</th>
+          <th>결혼여부</th>
+        </tr>
       </thead>
       <tbody>
-      {% for user in users %}
-      <tr>
-        <td>{{user.id}}</td>
-        <td>{{user.name}}</td>
-        <td>{{user.age}}</td>
-        <td>{{ '기혼' if user.married else '미혼'}}</td>
-      </tr>
-      {% endfor %}
+        {% for user in users %}
+        <tr>
+          <td>{{user.id}}</td>
+          <td>{{user.name}}</td>
+          <td>{{user.age}}</td>
+          <td>{{ '기혼' if user.married else '미혼'}}</td>
+        </tr>
+        {% endfor %}
       </tbody>
     </table>
-    <br>
+    <br />
     <div>
       <form id="comment-form">
         <fieldset>
-          <legend>댓글 등록</legend>
-          <div><input id="userid" type="text" placeholder="사용자 아이디"></div>
-          <div><input id="comment" type="text" placeholder="댓글"></div>
+          <legend>💌 축하 메시지</legend>
+          <div>
+            <input id="userid" type="text" placeholder="하객 아이디" />
+          </div>
+          <div>
+            <input
+              id="comment"
+              type="text"
+              placeholder="축하 메시지를 남겨주세요"
+            />
+          </div>
           <button type="submit">등록</button>
         </fieldset>
       </form>
     </div>
-    <br>
+    <br />
     <table id="comment-list">
       <thead>
-      <tr>
-        <th>아이디</th>
-        <th>작성자</th>
-        <th>댓글</th>
-        <th>수정</th>
-        <th>삭제</th>
-      </tr>
+        <tr>
+          <th>아이디</th>
+          <th>작성자</th>
+          <th>축하 메시지</th>
+          <th>수정</th>
+          <th>삭제</th>
+        </tr>
       </thead>
       <tbody></tbody>
     </table>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="/mongoose.js"></script>
+    <script>
+      document
+        .getElementById("user-form")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const username = document.getElementById("username").value;
+          const age = document.getElementById("age").value;
+          const married = document.getElementById("married").checked;
+
+          try {
+            const response = await axios.post("/visitors", {
+              name: username,
+              age,
+              married,
+            });
+            console.log("User added:", response.data);
+            // 추가된 사용자를 테이블에 표시하는 코드를 여기에 추가할 수 있습니다.
+          } catch (error) {
+            console.error("Error adding user:", error);
+          }
+        });
+
+      document
+        .getElementById("comment-form")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const userid = document.getElementById("userid").value;
+          const comment = document.getElementById("comment").value;
+
+          try {
+            const response = await axios.post("/comments", { userid, comment });
+            console.log("Comment added:", response.data);
+            // 추가된 댓글을 테이블에 표시하는 코드를 여기에 추가할 수 있습니다.
+          } catch (error) {
+            console.error("Error adding comment:", error);
+          }
+        });
+    </script>
   </body>
 </html>
