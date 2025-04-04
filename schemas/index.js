@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 // mongoose.js와 연결되어 있습니다.
 // app.js에서 이 connect 함수를 불러와서 실행하고,
 // mongoose.js는 프론트엔드에서 axios를 통해 서버와 통신합니다.
+mongoose.set("strictQuery", false);
 const connect = () => {
   if (process.env.NODE_ENV !== "production") {
     mongoose.set("debug", true);
